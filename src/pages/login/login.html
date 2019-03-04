@@ -1,0 +1,117 @@
+<!--<head>
+  <style>
+  div {
+    border: 1px solid black;
+    background-color: lightblue;
+    padding-top: 50px;
+    padding-right: 30px;
+    padding-bottom: 50px;
+    padding-left: 80px;
+  }
+  </style>
+  </head>
+
+    <ion-content class="background">
+
+        <ion-list no-line>
+            <form>
+              <ion-item>
+                <ion-label floating>Email</ion-label>
+                <ion-input
+                  [(ngModel)]="user.email"
+                  name="email"
+                  type="text"
+                  autocapitalize="off"
+                  required
+                >
+                </ion-input>
+              </ion-item>
+        
+              <ion-item>
+                <ion-label floating>Contraseña</ion-label>
+                <ion-input
+                  [(ngModel)]="user.password"
+                  name="password"
+                  type="password"
+                  required
+                >
+                </ion-input>
+              </ion-item>
+              <div padding>
+                <button
+                    ion-button 
+                    (click)="login()"
+                    type="submit"
+                    color="corporate"
+                    block
+                >
+                  Login
+                </button>
+        
+                <button
+                  ion-button 
+                  (click)="signin()"
+                  type="submit"
+                  color="twitter"
+                  block
+                >
+                  Registrarse
+                </button>
+              </div>
+            </form>
+          </ion-list>  
+
+</ion-content> -->
+
+<ion-content class="background">
+  <ion-card>
+    <ion-card-header>
+      Login 
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list no-line>
+          <ion-item>
+            <ion-label floating>Email</ion-label>
+            <ion-input
+              [(ngModel)]="user.email"
+              name="email"
+              type="text"
+              autocapitalize="off"
+              required
+            >
+            </ion-input>
+          </ion-item>
+    
+          <ion-item>
+            <ion-label floating>Contraseña</ion-label>
+            <ion-input
+              [(ngModel)]="user.password"
+              name="password"
+              type="password"
+              required
+            >
+            </ion-input>
+          </ion-item>
+          <button
+          ion-button 
+          (click)="login()"
+          type="submit"
+          color="corporate"
+          block
+          >
+          Login
+          </button>
+          <p>OR</p>
+          <button
+          ion-button 
+          (click)="signin()"
+          type="submit"
+          color="facebook"
+          block
+          >
+          Registrarse
+          </button>        
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,38 @@
+
+<!--<ion-header>
+  <ion-navbar>
+    <ion-title>GeneralDevice</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <button
+  ion-button 
+  (click)="device1()"
+  type="submit"
+  round outline large
+   >
+  <ion-img style="width : 50px ; height : 50px" src="assets/imgs/Greensly.jpg"></ion-img>
+  </button>
+  <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+</ion-content>-->
+<ion-content class="background">
+  <ion-card>
+    <ion-card-header>
+      Tipo de Dispositivo
+    </ion-card-header>
+    <ion-card-content>
+        <ion-list no-line>
+            <button
+            ion-button 
+            (click)="device1()"
+            type="submit"
+            round outline large
+             >
+            <ion-img style="width : 50px ; height : 50px" src="assets/imgs/Greensly.jpg"></ion-img>
+            </button>
+        </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <button ion-button class="bottom" block color="danger" style="animation: logout 3s"(click)="cerrarSesion()">Cerrar Sesión</button>    
+</ion-content>  

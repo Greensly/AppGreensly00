@@ -1,0 +1,1737 @@
+ionic start AppMain blank
+
+ionic g tabs PageMain
+
+//Preguntará cantidad de tabs, ponemos 2
+//nombre de lo tabs , login y config
+
+//En ""src/app/app.components.ts" modificar "rootPage" de HomePage ==> 'PageMainPage'
+
+
+import { Component } from '@angular/core';
+
+import { Platform } from 'ionic-angular';
+
+import { StatusBar } from '@ionic-native/status-bar';
+
+import { SplashScreen } from '@ionic-native/splash-screen';
+
+
+import { HomePage } from '../pages/home/home';
+
+
+@Component({
+
+  templateUrl: 'app.html'
+
+})
+
+export class MyApp {
+
+  rootPage:any = 'PageMainPage';
+
+
+  
+constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+
+    platform.ready().then(() => {
+
+      statusBar.styleDefault();
+
+      splashScreen.hide();
+
+    });
+
+  }
+
+}
+
+//Modificar icono de tabs en "page-main.html"
+
+<ion-tabs>
+
+    <ion-tab [root]="loginRoot" tabTitle="Login" tabIcon="finger-print"></ion-tab>
+
+    <ion-tab [root]="configRoot" tabTitle="Config" tabIcon="laptop"></ion-tab>
+
+</ion-tabs>
+
+//instalamos firabase y angularfire2
+
+npm install angularfire2 firebase --save
+
+//En "app.module.ts" agregamos lo siguiente
+
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+export const firebaseConfig = {
+  apiKey: "xxxxxxxxxx",
+  authDomain: "your-domain-name.firebaseapp.com",
+  databaseURL: "https://your-domain-name.firebaseio.com",
+  storageBucket: "your-domain-name.appspot.com",
+  messagingSenderId: '<your-messaging-sender-id>'
+}; 
+
+//En "app.module.ts" modificar imports
+
+  imports: [
+
+    BrowserModule,
+
+    IonicModule.forRoot(MyApp),
+
+    AngularFireModule.initializeApp(firebaseConfig),
+
+    AngularFireDatabaseModule,
+
+    AngularFireAuthModule
+
+  ],
+
+
+//Genera provider auth
+
+ionic g provider auth
+
+//modificamos "auth.ts", debe quedar así
+
+import { Injectable } from '@angular/core';
+
+import { AngularFireAuth } from 'angularfire2/auth';
+
+import * as firebase from 'firebase/app';
+
+
+/*
+  Generated class for the AuthProvider provider.
+
+  See https://angular.io/guide/dependency-injection for more info on providers
+  and Angular DI.
+*/
+
+
+@Injectable()
+
+export class AuthProvider {
+
+
+  constructor(private afAuth :  AngularFireAuth) {
+
+    console.log('Hello AuthProvider Provider');
+
+  }
+
+
+}
+
+
+//En login.html agregar autentificación por email
+
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>Login</ion-title>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content>
+
+
+        <ion-list>
+
+            <form>
+
+              <ion-item>
+
+                <ion-label floating>Email</ion-label>
+
+                <ion-input
+
+                  [(ngModel)]="user.email"
+
+                  name="email"
+
+                  type="text"
+
+                  autocapitalize="off"
+
+                  required
+
+                >
+
+                </ion-input>
+
+              </ion-item>
+
+        
+              <ion-item>
+
+                        <ion-label floating>Contraseña</ion-label>
+                                      <ion-input
+
+                          [(ngModel)]="user.password"
+
+                          name="password"
+
+                          type="password"
+
+                          required
+
+                         >
+  
+            </ion-input>
+
+              </ion-item>
+
+              <div padding>
+
+                <button
+
+                    ion-button
+ 
+                    (click)="login()"
+
+                    type="submit"
+
+                    color="primary"
+
+                    block
+
+                >
+
+                  Login
+
+                </button>
+
+        
+          <button
+
+                  ion-button
+ 
+                 (click)="signin()"
+
+                  type="submit"
+
+                  color="secondary"
+
+                  block
+
+                >
+
+                  Dar de alta
+
+                </button>
+
+              </div>
+
+            </form>
+
+          </ion-list>
+  
+
+</ion-content>
+
+
+//Añadir  en "login.ts" el arreglo "user"
+
+export class LoginPage {
+
+  user= { email : '', password : ''};
+
+  constructor(public navCtrl: NavController, public navParams: NavParams) {
+
+  }
+
+
+//En "Auth.ts" añadimos funcion "registerUser"
+
+import { Injectable } from '@angular/core';
+
+import { AngularFireAuth } from 'angularfire2/auth';
+
+import * as firebase from 'firebase/app';
+
+
+@Injectable()
+
+export class AuthProvider {
+
+
+  constructor(private afAuth :  AngularFireAuth) {
+
+    console.log('Hello AuthProvider Provider');
+
+  }
+   
+// Registro de usuario
+
+    registerUser(email:string, password:string){
+
+      return this.afAuth.auth.createUserWithEmailAndPassword( email, password)
+      .then((res)=>{
+
+       // El usuario se ha creado correctamente.
+
+      })
+
+      .catch(err=>Promise.reject(err))
+
+   }
+
+}
+//Modificamos "Login.ts"
+
+
+import { Component } from '@angular/core';
+
+import { IonicPage, NavController, NavParams, AlertController} from 'ionic-angular';
+
+import { AuthProvider } from '../../providers/auth/auth';
+
+
+@IonicPage()
+
+@Component({
+
+  selector: 'page-login',
+
+  templateUrl: 'login.html',
+
+})
+
+export class LoginPage {
+
+  user= { email : '', password : ''};
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider,public alertCtrl : AlertController) {
+
+  }
+
+
+  ionViewDidLoad() {
+
+    console.log('ionViewDidLoad LoginPage');
+
+  }
+
+
+
+  signin(){
+
+    this.auth.registerUser(this.user.email,this.user.password)
+
+    .then((user) => {
+
+      // El usuario se ha creado correctamente
+
+    })
+
+    .catch(err=>{
+
+      let alert = this.alertCtrl.create({
+
+        title: 'Error',
+
+        subTitle: err.message,
+
+        buttons: ['Aceptar']
+
+      });
+
+      alert.present();
+
+    })
+
+
+  }
+ 
+}
+
+
+// Si sale error
+//Error: ./node_modules/firebase/utils/promise.js
+//Module not found: Error: Can't resolve 'promise-polyfill'
+//Se resuelve con el siguiente codigo
+
+npm install promise-polyfill --save-exact
+
+//En auth.ts debemos autentificarnos con
+
+ // Login de usuario
+ loginUser(email:string, password:string){
+   return this.afAuth.auth.signInWithEmailAndPassword(email, password)
+     .then(user=>Promise.resolve(user))
+     .catch(err=>Promise.reject(err))
+ }
+
+
+//En login.ts crearemos un metodo que al pulsar el boton "login" ingresará aca 
+
+
+login()
+{
+    this.auth.loginUser(this.user.email,this.user.password ).then((user) => {
+      }
+    )
+     .catch(err=>{
+      let alert = this.alertCtrl.create({
+        title: 'Error',
+        subTitle: err.message,
+        buttons: ['Aceptar']
+      });
+      alert.present();
+    })
+  }
+
+// en auth.ts se creará un metodo para devolver sesion
+
+// Devuelve la session
+ get Session(){
+  return this.afAuth.authState;
+ }
+
+//En "app.component.ts" debemos importar
+
+import { AuthProvider } from '../providers/auth/auth';
+
+// en "app.component.ts" modificar el constructor 
+
+  constructor(
+    platform: Platform,
+    statusBar: StatusBar,
+    splashScreen: SplashScreen,
+    private auth: AuthProvider
+  ) 
+
+// En "app.component.ts" modificar tambien platform.read().then
+
+    platform.ready().then(() => {
+
+      this.auth.Session.subscribe(session=>{
+
+        if(session){
+
+            this.rootPage = 'MisTabsPage';
+
+        }
+
+          else{
+
+            this.rootPage = 'LoginPage';
+
+          }
+
+      });
+
+      // Okay, so the platform is ready and our plugins are available.
+
+      // Here you can do any higher level native things you might need.
+      statusBar.styleDefault();
+
+      splashScreen.hide();
+
+    });
+
+//Crear una nueva pagina para ingresar una vez se inicie sesion
+
+ionic g page generaldevice
+
+
+// modificar "page-main.ts"
+
+
+export class PageMainPage {
+
+
+  loginRoot = 'LoginPage'
+
+  configRoot = 'ConfigPage'
+
+  generaldeviceRoot = 'GeneralDevicePage'
+
+
+
+  
+constructor(public navCtrl: NavController) {}
+
+
+}
+
+
+// Modificar "page-main.html"
+
+<ion-tabs>
+
+    <ion-tab [root]="loginRoot" tabTitle="Login" tabIcon="finger-print"></ion-tab>
+
+    <ion-tab [root]="generaldeviceRoot" tabTitle="General Device" tabIcon="finger-print"></ion-tab>
+
+    <ion-tab [root]="configRoot" tabTitle="Config" tabIcon="laptop"></ion-tab>
+
+</ion-tabs>
+
+//En "auth.ts" añadiremos el metodo siguiente
+
+ // Logout de usuario
+ logout(){
+   this.afAuth.auth.signOut().then(()=>{
+     // hemos salido
+   })
+ }
+
+// generar nuevo tabs,solo 1, nombre Info
+
+ionic g tabs Device
+
+// agregar en "general-device.html"
+
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>GeneralDevice</ion-title>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+
+</ion-content>
+
+// en "general-device.ts" agregar import
+
+import { AuthProvider } from '../../providers/auth/auth';
+
+// modificar el constructor de "general-device.ts" 
+
+constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider) {
+  }
+
+//agregar en "general-device.ts" un metodo 
+
+cerrarSesion(){
+      this.auth.logout();
+  }
+
+
+//modificar "app.components.ts"
+
+
+import { Component } from '@angular/core';
+
+import { Platform } from 'ionic-angular';
+
+import { StatusBar } from '@ionic-native/status-bar';
+
+import { SplashScreen } from '@ionic-native/splash-screen';
+
+
+import { HomePage } from '../pages/home/home';
+
+import { AuthProvider } from '../providers/auth/auth';
+
+@Component({
+
+  templateUrl: 'app.html'
+
+})
+
+export class MyApp {
+
+  rootPage:any = 'PageMainPage';
+
+
+  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,private auth: AuthProvider) {
+
+    platform.ready().then(() => {
+
+      this.auth.Session.subscribe(session=>{
+
+        if(session){
+
+            this.rootPage = 'GeneralDevicePage';
+
+        }
+
+          else{
+
+            //this.rootPage = 'LoginPage';
+
+            this.rootPage = 'PageMainPage';
+
+          }
+
+      });
+
+      
+      statusBar.styleDefault();
+
+      splashScreen.hide();
+
+    });
+
+  }
+
+}
+
+// gestionar datos de firebase, con nuevo provider
+
+ionic g provider firebaseDb
+
+//en "firebase-db.ts" eliminamos
+
+import { HttpClient } from '@angular/common/http';
+
+//en "firebase-db.ts" agregamos import y modificamos el constructor:
+
+import { Injectable } from '@angular/core';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AuthProvider } from '../auth/auth';
+
+@Injectable()
+export class FirebaseDbProvider {
+
+  constructor(public afDB: AngularFireDatabase, public auth: AuthProvider) {
+    console.log('Hello FirebaseDbProvider Provider');
+  }
+}
+
+//En "auth.ts" crear funcion para conseguir id de usuario 
+
+// Obtenemos el id de usuario
+ getUser(){
+    return this.afAuth.auth.currentUser.uid;
+ }
+
+
+// en "firebase-db.ts" agregaremos metodo para crear dispositivo segun usuario
+
+guardarDevice(device){
+     device.tipo = 1;
+     return this.afDB.database.ref('device/'+this.auth.getUser()+'/'+device.tipo).set(device)
+  }
+
+//En "config.ts" agregamos
+
+import { FirebaseDbProvider } from '../../providers/firebase-db/firebase-db';
+
+// En "config.ts" modificar constructor
+
+constructor(public navCtrl: NavController, public navParams: NavParams, private dbFirebase :FirebaseDbProvider) {
+  }
+
+//En "config.ts" agregamos el metodo
+
+  guardarDevice()
+
+  {
+
+    let device =
+
+    {
+
+      tipo: "1",
+
+      Nombre: "Greensly" ,
+
+      temperatura: "20",
+
+      Nivelagua: "100",
+
+      humedad: "80",
+
+    }
+
+    this.dbFirebase.guardaDevice(device).then(res=>{
+
+        console.log('Dispositivo guardado en firebase:');
+
+    })
+
+  }
+
+
+//En "config.ts" al inicio de export agregar
+
+export class ConfigPage {
+
+  tipo: string;
+
+  Nombre: string;
+
+  temperatura: string;
+
+  Nivelagua: string;
+
+  humedad: string;
+
+// en "config.ts" agregar
+
+  cerrarSesion(){
+
+    this.auth.logout();
+
+}
+
+// En "config.ts" en constructor
+
+public auth : AuthProvider
+
+// En "config.ts" importar
+
+import { AuthProvider } from '../../providers/auth/auth';
+
+//En "config.html" agregar boton
+
+<button
+
+  ion-button
+ 
+  (click)="cerrarSesion()"
+
+   type="submit"
+
+   color="primary"
+
+   block
+
+   >
+
+   Cerrar Sesion
+
+  </button>
+
+//en "firebase-db.ts" para conseguir datos de firebase agregue metodo
+
+ getDevice(){
+
+  return this.afDB.list('device/'+this.auth.getUser()).valueChanges();
+} 
+
+//Modificaremos "general-device" para que una vez agregemos un dispositivo en //config, nos deje ir a la ventana de un dispositivo especifico. Para eso 
+//agregaremos un boton en "general-device.html"
+//La imagen Greensly.jpg debe estar en esta direccion del proyecto src="assets/imgs/Greensly.jpg"
+
+      <button
+      ion-button 
+      (click)="device()"
+      type="submit"
+      round outline large
+      >
+      <ion-img style="width : 50px ; height : 50px" src="assets/imgs/Greensly.jpg"></ion-img>
+      </button>
+
+//Luego en "general-device.ts" agregar metodo para que el html reconozca la funcion y nos dirija a la pagina device
+
+
+  device() {
+  this.navCtrl.push("DevicePage");
+  }
+
+
+//borrar de page-main.ts
+
+configRoot = 'ConfigPage'
+generaldeviceRoot = 'GeneralDevicePage'
+
+//borrar de page-main.html
+
+<ion-tab [root]="generaldeviceRoot" tabTitle="General Device" tabIcon="finger-print"></ion-tab>
+<ion-tab [root]="configRoot" tabTitle="Config" tabIcon="laptop"></ion-tab>
+
+//modificar "app.component.ts"
+
+        if(session){
+
+            this.rootPage = 'GeneralDevicePage';
+
+
+        }
+---------------------no pescar esto---------------------------------
+--------------------------------------------------------------------
+//modificar "general-device.html" para que solo sea un menu de tabs
+
+<ion-tabs>
+
+    <ion-tab [root]="deviceRoot" tabTitle="Device" tabIcon="bug"></ion-tab>
+    <ion-tab [root]="configRoot" tabTitle="Config" tabIcon="laptop"></ion-tab>
+
+</ion-tabs>
+
+//modificar "general-device.ts" para que solo sea un menu de tabs
+
+import { Component } from '@angular/core';
+
+import { IonicPage, NavController } from 'ionic-angular';
+
+
+
+@IonicPage()
+
+@Component({
+
+  selector: 'page-general-device',
+
+  templateUrl: 'general-device.html'
+
+})
+
+export class GeneralDevicePage {
+
+
+  deviceRoot = 'DevicePage'
+
+  configRoot = 'ConfigPage'
+constructor(public navCtrl: NavController) {}
+
+
+}
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+// En general-device.ts agregue
+
+  config() {
+
+    this.navCtrl.push("ConfigPage");
+
+    }
+
+// En general-device.html agregue
+
+<button ion-button block (click)="config()">Configurar</button>
+
+//Modificamos "Device.ts" para que al entrar lea los datos del sensor directamente de Firebase
+
+import { Component } from '@angular/core';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
+
+import { AuthProvider } from '../../providers/auth/auth';
+import { FirebaseDbProvider } from '../../providers/firebase-db/firebase-db';
+
+@IonicPage()
+
+@Component({
+
+  selector: 'page-device',
+
+  templateUrl: 'device.html',
+
+})
+
+export class DevicePage {
+ devices = {nivelagua: null,nombre: null,humedad: null, temperatura: null, tipo: null};
+ constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider,public dbFirebase :FirebaseDbProvider) {
+}
+  ionViewDidLoad() {
+
+    console.log('ionViewDidLoad DevicePage');
+
+  }
+
+  ionViewDidEnter(){
+
+   
+    this.dbFirebase.getDevice(1).valueChanges().subscribe(devices=>{
+      alert("Leyendo datos Firebase");
+
+      console.log(devices);
+
+      this.devices.tipo = devices['tipo'];
+
+      this.devices.nombre = devices['nombre'];
+
+      this.devices.nivelagua = devices['nivelagua'];
+
+      this.devices.temperatura = devices['temperatura'];
+
+      this.devices.humedad = devices['humedad'];
+    });
+  }
+
+ 
+}
+
+//en "firebase-db.ts" modificar
+
+public getDevice(tipo){
+
+  return this.afDB.object('devices/'+this.auth.getUser()+'/1');
+ 
+}
+
+//modificar "device.html"
+
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>Device</ion-title>
+
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+
+  
+      <ion-item>
+
+        <ion-label floating>Tipo Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="devices.tipo"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Nombre Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="devices.nombre"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Nivel de Agua</ion-label>
+
+        <ion-input type="text" [(ngModel)]="devices.nivelagua"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Temperatura Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="devices.temperatura"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Humedad Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="devices.humedad"></ion-input>
+
+      </ion-item>
+
+    </ion-list>
+
+</ion-content>
+
+//modificar "firebase-db.ts" para que la funcion de llamar al dispositivo sea mas generico y no solo sea para los tipo "1" que corresponde solo a Greensly
+
+public getDevice(tipo){
+  return this.afDB.object('devices/'+this.auth.getUser()+'/'+tipo);
+  
+}
+
+//si lo anterior no resulta o sale error probar desintar angularfire2 e instalar la ultima actuacion. en mi caso instale la version 5.8.0
+//npm uninstall angularfire2
+//npm install angularfire2@5.8.0
+
+
+// En "config.ts" si quieres ver por pantalla la info que se guarda, agrega un interface y la funcion msg
+
+            interface info{
+
+            humedad:string;
+
+            nivelagua: string;
+
+            nombre: string;
+
+            temperatura: string;
+
+            tipo: string;
+
+            }
+
+            function msg(datos:info){
+
+            return "Los datos guardados son:"+"\n Tipo " + datos.tipo + "\n Nombre "+ datos.nombre + "\n Temp "+ datos.temperatura + "\n Humedad "+ datos.humedad + "\n Nivel Agua "+ datos.nivelagua;
+ 
+            }
+
+            alert(msg(device)
+
+//Agregaremos la configuracion por personalizada por cliente
+//en "config.ts" dentro de "export class ConfigPage" declaramos las variables "levelwater", "name" y "type". quedaria asi
+
+export class ConfigPage {
+
+  humedad: string; nivelagua: string; nombre: string; temperatura: string; tipo: string;
+
+
+  levelwater: string; name: string; type: string;
+
+//luego en "config.ts" modificamos el array "device" dentro de la funcion "guardarDevice()"
+
+  guardarDevice()
+
+  {
+
+    let device =
+
+    {
+
+      humedad:  "Aun no leído",
+
+      nivelagua: this.levelwater,
+
+      nombre: this.name,
+
+      temperatura: "Aun no leído",
+
+      tipo: this.type,
+
+    }
+
+
+    this.dbFirebase.guardaDevice(device).then(res=>{
+
+        console.log('Dispositivo guardado en firebase:');
+
+            interface info{
+
+            humedad:string;
+
+            nivelagua: string;
+
+            nombre: string;
+
+            temperatura: string;
+
+            tipo: string;
+
+            }
+
+            function msg(datos:info){
+
+            return "Los datos guardados son:"+"\n Tipo " + datos.tipo + "\n Nombre "+ datos.nombre + "\n Temp "+ datos.temperatura + "\n Humedad "+ datos.humedad + "\n Nivel Agua "+ datos.nivelagua;
+ 
+            }
+
+        alert(msg(device));
+
+    })
+
+  }
+
+//En "config.html" agregamos cuadrado de texto dentro de "<ion-content padding>"
+ 
+    <ion-item>
+
+        <ion-label floating>Nombre Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="name"></ion-input> <!--Mediante el atributo ngModel, este campo tendrá el valor de la variable name escrita por usuario-->
+
+    </ion-item>
+
+    <ion-item>
+
+        <ion-label floating>Tipo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="type"></ion-input>
+ 
+    </ion-item>
+
+    
+    <ion-item>
+
+        <ion-label floating>Ajuste nivel de agua</ion-label>
+
+        <ion-input type="text" [(ngModel)]="levelwater"></ion-input>
+ 
+    </ion-item>
+
+//Ahora crearemos una nueva ventana llamada device1
+//la idea es convertir a "generaldevice" como una pagina para seleccionar el tipo de dispositivo
+//device1 (Greensly), device2 (otro producto) ...etc
+//y en device1 seleccionar uno de todos tus greensly
+
+ionic g page device1
+
+//modificar "generalDevice.ts" para que al seleccionar la imagen de greensly se dirija a device1
+
+  device1() {
+
+    this.navCtrl.push("Device1Page");
+
+    }
+
+//modificar "generalDevice.html" para que al seleccionar la imagen de greensly se dirija a device1
+
+  <button
+
+  ion-button
+ 
+ (click)="device1()"
+
+  type="submit"
+
+  round outline large
+
+   >
+
+  <ion-img style="width : 50px ; height : 50px" src="assets/imgs/Greensly.jpg"></ion-img>
+
+  </button>
+
+//ahora en "device.ts" añadiremos el metodo config() y cerrarsesion(), añadiendo el import y constructor correspondiente a AuthProvider (esto lo necesita el metodo "cerrarsesion()") 
+
+import { Component } from '@angular/core';
+
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
+
+import { AuthProvider } from '../../providers/auth/auth';
+
+
+@IonicPage()
+
+@Component({
+
+  selector: 'page-device1',
+
+  templateUrl: 'device1.html',
+
+})
+
+export class Device1Page {
+
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider) {
+
+  }
+
+
+  ionViewDidLoad() {
+
+    console.log('ionViewDidLoad Device1Page');
+
+  }
+
+
+  config() {
+
+    this.navCtrl.push("ConfigPage");
+
+    }
+
+
+  cerrarSesion(){
+
+      this.auth.logout();
+
+    }
+
+
+}
+
+//en "device1.html" agregaremos los botones correspondiente a config() y cerrarsesion()
+
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>Greensly Dispositivos</ion-title>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <button ion-button block (click)="config()">Configurar</button>
+
+
+
+  <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+
+</ion-content>
+
+//ahora en "generaldevice.ts" borraremos el metodo config 
+
+  /*config() {
+
+    this.navCtrl.push("ConfigPage");
+
+  }*/
+
+//y en "generaldevice.html" borraremos el boton config 
+
+<!--<button ion-button block (click)="config()">Configurar</button>-->
+
+
+//En "device1" haremos que se visualicen los dispositivos creados y se lea su nombre,
+//para eso eso "device.ts" modificaremos el metodo ionViewDidLoad() y el metodo device()
+
+  ionViewDidLoad() {
+
+    console.log('ionViewDidLoad Device1Page');
+
+   
+    this.dbFirebase.getDevice(1).valueChanges().subscribe(devices=>{
+
+            this.devices.nombre = devices['nombre'];
+
+    });
+
+
+  }
+
+
+  device() {
+
+    this.navCtrl.push("DevicePage");
+
+    }
+
+//En "device.ts" añadiremos un import
+
+import { FirebaseDbProvider } from '../../providers/firebase-db/firebase-db';
+
+//En "device.ts" añadiremos un constructor
+
+constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider,public dbFirebase :FirebaseDbProvider) {
+
+  }
+
+//En "device1.html" modificaremos el contenido
+
+<ion-content>
+
+    <ion-list>
+        <button ion-item block (click)="device()">{{devices.nombre}}</button>
+ 
+   </ion-list>
+  <div padding>
+
+  <button ion-button block (click)="config()">Configurar</button>
+
+
+
+  <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+
+  </div>
+
+</ion-content>
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+
+
+// modificar "firebase-db.ts" añadiendo metodo "getDevices" array "devices=[]"
+
+import { Injectable } from '@angular/core';
+
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+
+import { AuthProvider } from '../auth/auth';
+
+@Injectable()
+
+export class FirebaseDbProvider {
+
+
+  constructor(public afDB: AngularFireDatabase, public auth: AuthProvider) {
+
+    console.log('Hello FirebaseDbProvider Provider');
+
+  }
+
+  devices = [];
+
+
+public guardaDevice(device){
+
+    return this.afDB.database.ref('devices/'+this.auth.getUser()+'/'+device.tipo).set(device)
+
+ }
+
+
+
+public getDevices(){
+
+  return this.afDB.list('devices/'+this.auth.getUser());
+  
+}
+
+
+
+public getDevice(tipo){
+
+  return this.afDB.object('devices/'+this.auth.getUser()+'/'+tipo);
+  
+}
+
+}
+
+/// modificar "device1.ts"
+
+import { Component } from '@angular/core';
+
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
+
+import { AuthProvider } from '../../providers/auth/auth';
+
+import { FirebaseDbProvider } from '../../providers/firebase-db/firebase-db';
+
+import { DevicePage } from '../device/device';
+
+
+
+@IonicPage()
+
+@Component({
+
+  selector: 'page-device1',
+
+  templateUrl: 'device1.html',
+
+})
+
+export class Device1Page {
+
+devices=[];
+
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider,public dbFirebase :FirebaseDbProvider) {
+
+    this.dbFirebase.getDevices().valueChanges().subscribe(dev=>{
+
+      console.log(dev);
+      
+      this.devices = dev;
+
+    });
+
+  }
+
+
+
+  public goToDevice(tipo) {
+
+    this.navCtrl.push(DevicePage, {tipo:tipo});
+
+    }
+
+
+  config() {
+
+    this.navCtrl.push("ConfigPage");
+
+    }
+
+
+  cerrarSesion(){
+
+      this.auth.logout();
+
+    }
+
+
+}
+
+
+//modificar "device1.html"
+
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>Greensly Dispositivos</ion-title>
+
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <button ion-item *ngFor="let device of devices" (click)="goToDevice(device.tipo)">
+
+    {{ device.nombre }}
+
+  </button>
+ 
+
+  <div padding>
+
+    <button ion-button block (click)="config()">Configurar</button>
+
+    <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+
+    </div>
+
+  </ion-content>
+
+///modificar "device.ts"
+
+import { Component } from '@angular/core';
+
+import { IonicPage, NavController, NavParams} from 'ionic-angular';
+
+import { AuthProvider } from '../../providers/auth/auth';
+
+import { FirebaseDbProvider } from '../../providers/firebase-db/firebase-db';
+
+import { NgContentAst } from '@angular/compiler';
+
+
+@IonicPage()
+
+@Component({
+
+  selector: 'page-device',
+
+  templateUrl: 'device.html',
+
+})
+
+export class DevicePage {
+
+  device = {nivelagua: null,nombre: null,humedad: null, temperatura: null,tipo: null};
+
+  tipo =null;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider,public dbFirebase :FirebaseDbProvider) {
+
+    this.tipo = navParams.get('tipo');
+
+    if(this.tipo != 0){
+
+      this.dbFirebase.getDevice(this.tipo).valueChanges().subscribe(device=>{
+
+        alert("Leyendo datos Firebase");
+
+        console.log(device);
+
+        this.device.tipo = device['tipo'];
+
+        this.device.nombre = device['nombre'];
+
+        this.device.nivelagua = device['nivelagua'];
+
+        this.device.temperatura = device['temperatura'];
+
+        this.device.humedad = device['humedad'];
+      });
+
+  }
+
+}
+
+  ionViewDidLoad() {
+
+    console.log('ionViewDidLoad DevicePage');
+
+  }
+
+  cerrarSesion(){
+
+    this.auth.logout();
+
+  }
+
+  
+}
+
+///modificar "device.html"
+
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>Device</ion-title>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+    <ion-list>
+
+      <ion-item>
+
+        <ion-label floating>Nombre Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="device.nombre"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Nivel de Agua</ion-label>
+
+        <ion-input type="text" [(ngModel)]="device.nivelagua"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Temperatura Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="device.temperatura"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+
+        <ion-label floating>Humedad Dispositivo</ion-label>
+
+        <ion-input type="text" [(ngModel)]="device.humedad"></ion-input>
+
+      </ion-item>
+
+    </ion-list>
+
+</ion-content>
+
+//// modificar "app.module.ts"
+
+import { BrowserModule } from '@angular/platform-browser';
+
+import { ErrorHandler, NgModule } from '@angular/core';
+
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+
+import { SplashScreen } from '@ionic-native/splash-screen';
+
+import { StatusBar } from '@ionic-native/status-bar';
+
+
+import { MyApp } from './app.component';
+
+import { HomePage } from '../pages/home/home';
+
+import { DevicePage } from '../pages/device/device';
+
+
+import { AngularFireModule } from 'angularfire2';
+
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+import { AuthProvider } from '../providers/auth/auth';
+
+import { FirebaseDbProvider } from '../providers/firebase-db/firebase-db';
+
+
+
+export const firebaseConfig = {
+
+  apiKey: "AIzaSyDZl7DPQwD7XkKWwV-XpOiZ5P453_Ob2bs",
+
+  authDomain: "greensly-b90a5.firebaseapp.com",
+
+  databaseURL: "https://greensly-b90a5.firebaseio.com",
+
+  storageBucket: "greensly-b90a5.appspot.com",
+
+  messagingSenderId: '349909574827'
+
+};
+
+
+@NgModule({
+
+  declarations: [
+
+    MyApp,
+ 
+    HomePage,
+
+    DevicePage
+
+  ],
+
+  imports: [
+
+    BrowserModule,
+
+    IonicModule.forRoot(MyApp),
+
+    AngularFireModule.initializeApp(firebaseConfig),
+
+    AngularFireDatabaseModule,
+
+    AngularFireAuthModule
+
+  ],
+
+  bootstrap: [IonicApp],
+
+  entryComponents: [
+
+    MyApp,
+
+    HomePage,
+
+    DevicePage
+
+  ],
+
+  providers: [
+
+    StatusBar,
+
+    SplashScreen,
+
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+
+    AuthProvider,
+
+    FirebaseDbProvider
+
+  ]
+
+})
+
+export class AppModule {}
+
+
+//modificar "firebase-db.ts" para agregar la opcion de poner id segun "Date.now" en el metodo "guardarDevice()"
+
+public guardaDevice(device){
+
+  if(!device.tipo){
+
+    device.tipo  = String(Date.now());
+
+  }
+
+    return this.afDB.database.ref('devices/'+this.auth.getUser()+'/'+device.tipo).set(device)
+ }
+
+//agregar en "firebase-db.ts" el metodo deleteDevice() 
+
+public deleteDevice(tipo){
+
+  this.afDB.database.ref('devices/'+this.auth.getUser()+'/'+tipo).remove();
+
+  }
+
+// agregar el metodo "deleteDevice()" en "device.ts"
+
+  deleteDevice(tipo){
+
+
+    let alert = this.alertCtrl.create({
+
+      title: 'Confirmar borrado',
+
+      message: '¿Estás seguro de que deseas eliminar este sitio?',
+
+      buttons: [
+
+        {
+
+          text: 'No',
+
+          role: 'cancel',
+
+          handler: () => {
+
+            // Ha respondido que no así que no hacemos nada
+
+          }
+
+        },
+
+        {
+
+          text: 'Si',
+
+          handler: () => {
+
+               // AquÍ borramos el sitio en firebase
+
+              this.dbFirebase.deleteDevice(this.tipo);
+
+           }
+
+        }
+
+      ]
+
+    });
+
+    alert.present();
+
+ }
+
+//en "device.ts" agregar "AlertController" en los import y en constructor
+
+import { IonicPage, NavController, NavParams, AlertController} from 'ionic-angular';
+
+constructor(public navCtrl: NavController, public navParams: NavParams,public auth : AuthProvider,public dbFirebase :FirebaseDbProvider,public alertCtrl : AlertController) {
+
+
+// agregar "config.ts", al final de la funcion "guardarDevice()"
+
+this.navCtrl.pop();
+
+// agregaremos editar device 
+// en "device.ts" declaramos algunas variables dentro del "export class DevicePage{"
+
+levelwater: string; name: string;
+
+// en "device.ts" creamos el metodo "editarDevice()"
+
+ public editarDevice()
+
+ {
+
+   this.device.nombre= this.name,
+
+   this.device.nivelagua= this.levelwater,
+ 
+   this.dbFirebase.guardaDevice(this.device).then(res=>{});
+
+   this.navCtrl.pop();
+
+  }
+
+//en "device.html" agregamos lo que se va a editar un boton
+
+    <div padding>
+
+        <ion-item>
+
+            <ion-label floating>Ajuste nombre</ion-label>
+
+            <ion-input type="text" [(ngModel)]="name"></ion-input>
+ 
+        </ion-item>
+
+        <ion-item>
+
+            <ion-label floating>Ajuste nivel de agua</ion-label>
+
+            <ion-input type="text" [(ngModel)]="levelwater"></ion-input>
+ 
+        </ion-item>
+
+      <button ion-button (click)="editarDevice()">Editar Dispositivo</button>
+
+      <button ion-button (click)="deleteDevice()">Borrar Dispositivo</button>
+
+      <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+
+      </div>

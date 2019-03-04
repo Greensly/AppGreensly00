@@ -1,0 +1,56 @@
+<!--
+  Generated template for the ConfigPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Config</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-item>
+        <ion-label floating>Nombre Dispositivo</ion-label>
+        <ion-input type="text" [(ngModel)]="name"></ion-input> <!--Mediante el atributo ngModel, este campo tendrá el valor de la variable name escrita por usuario-->
+    </ion-item>
+    <ion-item>
+        <ion-label floating>Tipo</ion-label>
+        <ion-input type="text" [(ngModel)]="type"></ion-input> 
+    </ion-item>
+    
+    <ion-item>
+        <ion-label floating>Ajuste nivel de agua</ion-label>
+        <ion-input type="text" [(ngModel)]="levelwater"></ion-input> 
+    </ion-item>
+<!--  <button
+  ion-button
+  (click)="presentActionSheet()"
+  type="submit"
+  color="primary"
+  block
+  >
+  Open Action Sheet
+  </button> 
+-->
+  <button
+  ion-button 
+  (click)="guardarDevice()"
+  type="submit"
+  color="primary"
+  block
+>
+Guardar dispositivo
+</button>
+
+<button
+  ion-button 
+  (click)="cerrarSesion()"
+  type="submit"
+  color="primary"
+  block
+  >
+  Cerrar Sesion
+  </button>
+</ion-content>

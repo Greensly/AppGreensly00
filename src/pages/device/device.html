@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Device</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Nombre Dispositivo</ion-label>
+        <ion-input type="text" [(ngModel)]="device.nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Nivel de Agua</ion-label>
+        <ion-input type="text" [(ngModel)]="device.nivelagua"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Temperatura Dispositivo</ion-label>
+        <ion-input type="text" [(ngModel)]="device.temperatura"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Humedad Dispositivo</ion-label>
+        <ion-input type="text" [(ngModel)]="device.humedad"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div padding>
+        <ion-item>
+            <ion-label floating>Ajuste nombre</ion-label>
+            <ion-input type="text" [(ngModel)]="name"></ion-input> 
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Ajuste nivel de agua</ion-label>
+            <ion-input type="text" [(ngModel)]="levelwater"></ion-input> 
+        </ion-item>
+      <button ion-button (click)="editarDevice()">Editar Dispositivo</button>
+      <button ion-button (click)="deleteDevice()">Borrar Dispositivo</button>
+      <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+      </div>
+</ion-content>

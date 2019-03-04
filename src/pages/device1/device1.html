@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Greensly Dispositivos</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <button ion-item *ngFor="let device of devices" (click)="goToDevice(device.tipo)">
+    {{ device.nombre }}
+  </button> 
+
+  <div padding>
+    <button ion-button block (click)="config()">Configurar</button>
+    <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </ion-content>
+  
