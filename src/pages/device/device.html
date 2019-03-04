@@ -1,3 +1,4 @@
+<!--
 <ion-header>
   <ion-navbar>
     <ion-title>Device</ion-title>
@@ -38,3 +39,43 @@
       <button ion-button block (click)="cerrarSesion()">Cerrar Sesión</button>
       </div>
 </ion-content>
+-->
+<ion-content class="background">
+    <ion-card>
+      <ion-card-header>
+        Dispositivo
+      </ion-card-header>
+      <ion-card-content>
+          <ion-list no-line>
+              <ion-item>
+                <ion-label floating>Nombre Dispositivo</ion-label>
+                <ion-input type="text" [(ngModel)]="device.nombre"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label floating>Nivel de Agua</ion-label>
+                <ion-input type="text" [(ngModel)]="device.nivelagua"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label floating>Temperatura Dispositivo</ion-label>
+                <ion-input type="text" [(ngModel)]="device.temperatura"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label floating>Humedad Dispositivo</ion-label>
+                <ion-input type="text" [(ngModel)]="device.humedad"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label floating>Ajuste nombre</ion-label>
+                <ion-input type="text" [(ngModel)]="name"></ion-input> 
+              </ion-item>
+              <ion-item>
+                <ion-label floating>Ajuste nivel de agua</ion-label>
+                <ion-input type="text" [(ngModel)]="levelwater"></ion-input> 
+              </ion-item>
+            </ion-list>        
+      </ion-card-content>
+    </ion-card>
+
+      <button ion-button class="edit" style="animation: editb 3s"(click)="editarDevice()">Editar Dispositivo</button>
+      <button ion-button class="delete" style="animation: deleteb 3s"(click)="deleteDevice()">Borrar Dispositivo</button>
+      <button ion-button class="logout" block color="danger" style="animation: logoutb 3s"(click)="cerrarSesion()">Cerrar Sesión</button>    
+  </ion-content>

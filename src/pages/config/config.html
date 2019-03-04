@@ -1,9 +1,4 @@
 <!--
-  Generated template for the ConfigPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
   <ion-navbar>
     <ion-title>Config</ion-title>
@@ -13,7 +8,7 @@
 <ion-content padding>
     <ion-item>
         <ion-label floating>Nombre Dispositivo</ion-label>
-        <ion-input type="text" [(ngModel)]="name"></ion-input> <!--Mediante el atributo ngModel, este campo tendrá el valor de la variable name escrita por usuario-->
+        <ion-input type="text" [(ngModel)]="name"></ion-input>
     </ion-item>
     <ion-item>
         <ion-label floating>Tipo</ion-label>
@@ -23,7 +18,7 @@
     <ion-item>
         <ion-label floating>Ajuste nivel de agua</ion-label>
         <ion-input type="text" [(ngModel)]="levelwater"></ion-input> 
-    </ion-item>
+    </ion-item>-->
 <!--  <button
   ion-button
   (click)="presentActionSheet()"
@@ -34,7 +29,7 @@
   Open Action Sheet
   </button> 
 -->
-  <button
+  <!--<button
   ion-button 
   (click)="guardarDevice()"
   type="submit"
@@ -53,4 +48,29 @@ Guardar dispositivo
   >
   Cerrar Sesion
   </button>
+</ion-content>
+-->
+<ion-content class="background">
+    <ion-card>
+      <ion-card-header>
+        Crear dispositivo
+      </ion-card-header>
+      <ion-card-content>
+          <ion-item>
+              <ion-label floating>Nombre Dispositivo</ion-label>
+              <ion-input type="text" [(ngModel)]="name"></ion-input>
+          </ion-item>
+          <ion-item>
+              <ion-label floating>Tipo</ion-label>
+              <ion-input type="text" [(ngModel)]="type"></ion-input> 
+          </ion-item>
+          
+          <ion-item>
+              <ion-label floating>Ajuste nivel de agua</ion-label>
+              <ion-input type="text" [(ngModel)]="levelwater"></ion-input> 
+          </ion-item>
+      </ion-card-content>
+    </ion-card>
+      <button ion-button type="submit" color="primary"  block (click)="guardarDevice()">Guardar Dispositivo</button>
+      <button ion-button class="bottom" block color="danger" style="animation: logout 3s"(click)="cerrarSesion()">Cerrar Sesión</button>    
 </ion-content>
