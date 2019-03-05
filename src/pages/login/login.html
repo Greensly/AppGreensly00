@@ -1,68 +1,4 @@
-<!--<head>
-  <style>
-  div {
-    border: 1px solid black;
-    background-color: lightblue;
-    padding-top: 50px;
-    padding-right: 30px;
-    padding-bottom: 50px;
-    padding-left: 80px;
-  }
-  </style>
-  </head>
-
-    <ion-content class="background">
-
-        <ion-list no-line>
-            <form>
-              <ion-item>
-                <ion-label floating>Email</ion-label>
-                <ion-input
-                  [(ngModel)]="user.email"
-                  name="email"
-                  type="text"
-                  autocapitalize="off"
-                  required
-                >
-                </ion-input>
-              </ion-item>
-        
-              <ion-item>
-                <ion-label floating>Contraseña</ion-label>
-                <ion-input
-                  [(ngModel)]="user.password"
-                  name="password"
-                  type="password"
-                  required
-                >
-                </ion-input>
-              </ion-item>
-              <div padding>
-                <button
-                    ion-button 
-                    (click)="login()"
-                    type="submit"
-                    color="corporate"
-                    block
-                >
-                  Login
-                </button>
-        
-                <button
-                  ion-button 
-                  (click)="signin()"
-                  type="submit"
-                  color="twitter"
-                  block
-                >
-                  Registrarse
-                </button>
-              </div>
-            </form>
-          </ion-list>  
-
-</ion-content> -->
-
+<!--
 <ion-content class="background">
   <ion-card>
     <ion-card-header>
@@ -115,3 +51,27 @@
     </ion-card-content>
   </ion-card>
 </ion-content>
+-->
+<head>
+	<ion-title>Login page</ion-title>
+</head>
+
+<body>
+	<div id="wrapper">
+		<div id="title_section">
+			LOGIN TO WEBSITE
+		</div>
+		<div id="content_section" style="animation: content 1s ease;">
+			<br/>
+			<form method="post">
+				<ion-input id="email" class="textbox" type="text" placeHolder="Email" name="email" style="animation: email 1s cubic-bezier(0.68, -2, 0.265, 1.55)">
+				<div id="email_label">Email</div>
+				<br/>
+				<input id="password" class="textbox" type="password" placeHolder="Password" name="password" style="animation: password 1s cubic-bezier(0.68, -2, 0.265, 1.55)">
+				<div id="password_label">Password</div>
+				<br/>
+				<input id="button" type="submit" value="Login" style="animation: button 1s cubic-bezier(0.68, -2, 0.265, 1.55)"> </input>
+			</form>
+		</div>
+	</div>
+</body>
